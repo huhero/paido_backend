@@ -6,6 +6,18 @@
 - poerty shell
 - task run
 
+## Migraciones
+
+generar versiones
+
+`alembic revision --autogenerate -m "create users table"`
+
+Aplicar una Migracion
+
+`alembic upgrade head`
+
+
+
 ## Herramientas para desarrollo
 
 - Ruff: Un linter y formateador
@@ -22,3 +34,12 @@
 ## Agregar librerias
 
 - `poerty add fastapi` 
+
+
+# Extras
+## Comandos Sqlite
+
+Abrir db `sqlite database.d`
+mostrar schemas `.schema`
+select `SELECT * from [table]`
+salir `.quit`
