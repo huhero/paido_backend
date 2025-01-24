@@ -72,28 +72,35 @@ def test_read_users(client):
     assert response.json() == []
 
 
-def test_read_users_with_data(client, user):
+def test_read_users_with_data(client, user, token):
     user_schema = UserPublic.model_validate(user).model_dump()
-    response = client.get('/users/')
+    response = client.get(
+        '/users/',
+        headers={'Authorization': f'Bearer {token}'},
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == [user_schema]
 
 
-def test_get_user_by_id(client, user):
+def test_get_user_by_id(client, user, token):
     user_schema = UserPublic.model_validate(user).model_dump()
-    response = client.get('/users/1')
+    response = client.get(
+        f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == user_schema
 
     response = client.get('/users/2')
-    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_put_user(client, user):
+def test_put_user(client, user, token):
     response = client.put(
-        '/users/1',
+        f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'testusername02',
             'email': 'test@test.com',
@@ -110,20 +117,49 @@ def test_put_user(client, user):
 
     response = client.put(
         '/users/2',
+        headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'testusername02',
             'email': 'test@test.com',
             'password': 'password',
         },
     )
-    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_deleted_user(client, user):
-    response = client.delete('/users/1')
+def test_deleted_user(client, user, token):
+    response = client.delete(
+        f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'User Deleted.'}
 
-    response = client.delete('/users/1')
-    assert response.status_code == HTTPStatus.NOT_FOUND
+    response = client.delete(
+        '/users/1',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+
+def test_get_token(client, user):
+    response = client.post(
+        '/token',
+        data={'username': user.email, 'password': user.clean_password},
+    )
+
+    token = response.json()
+
+    assert response.status_code == HTTPStatus.OK
+    assert token['token_type'] == 'Bearer'
+    assert 'access_token' in token
+
+    response = client.post(
+        '/token',
+        data={'username': user.username, 'password': user.clean_password},
+    )
+
+    token = response.json()
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED

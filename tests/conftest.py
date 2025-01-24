@@ -7,6 +7,7 @@ from sqlalchemy.pool import StaticPool
 from paido_backend.app import app
 from paido_backend.database import get_session
 from paido_backend.models import User, table_registry
+from paido_backend.security import get_password_hash
 
 # Orgnizar
 # exejutar
@@ -43,11 +44,26 @@ def session():
 
 @pytest.fixture
 def user(session):
+    pwd = 'password'
     user = User(
-        username='testusername', email='test@test.com', password='password'
+        username='testusername',
+        email='test@test.com',
+        password=get_password_hash(pwd),
     )
     session.add(user)
     session.commit()
     session.refresh(user)
 
+    user.clean_password = pwd
+
     return user
+
+
+@pytest.fixture
+def token(client, user):
+    response = client.post(
+        '/token',
+        data={'username': user.email, 'password': user.clean_password},
+    )
+
+    return response.json()['access_token']
