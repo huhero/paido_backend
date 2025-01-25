@@ -18,7 +18,7 @@ def test_jwt():
 
 def test_jwt_invalid_token(client):
     response = client.delete(
-        '/users/1',
+        url='/v1/users/1',
         headers={'Authorization': 'Bearer Token_invalidado'},
     )
 
