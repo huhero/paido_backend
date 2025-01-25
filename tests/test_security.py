@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from jwt import decode
 
-from paido_backend.security import ALGORITHM, SECRET_KEY, create_access_token
+from paido_backend.security import create_access_token, settings
 
 
 def test_jwt():
@@ -10,7 +10,7 @@ def test_jwt():
 
     token = create_access_token(data)
 
-    result = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    result = decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
 
     assert result['sub'] == data['sub']
     assert result['exp']

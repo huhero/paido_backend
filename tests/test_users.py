@@ -78,6 +78,16 @@ def test_get_user_by_id(client, user, token):
     assert response.status_code == HTTPStatus.UNAUTHORIZED
 
 
+def test_get_user_by_id_from_other_user(client, user, token):
+    response = client.get(
+        url=f'/v1/users/{user.id + 1}',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+
+    assert response.status_code == HTTPStatus.FORBIDDEN
+    assert response.json() == {'detail': 'Not enough permissions.'}
+
+
 def test_put_user(client, user, token):
     response = client.put(
         url=f'/v1/users/{user.id}',
@@ -96,8 +106,10 @@ def test_put_user(client, user, token):
         'id': 1,
     }
 
+
+def test_put_wrong_user(client, user, token):
     response = client.put(
-        url='/v1/users/2',
+        url=f'/v1/users/{user.id + 1}',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'testusername02',
@@ -105,7 +117,9 @@ def test_put_user(client, user, token):
             'password': 'password',
         },
     )
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+    assert response.status_code == HTTPStatus.FORBIDDEN
+    assert response.json() == {'detail': 'Not enough permissions.'}
 
 
 def test_deleted_user(client, user, token):
@@ -117,8 +131,12 @@ def test_deleted_user(client, user, token):
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'User Deleted.'}
 
+
+def test_deleted_wrong_user(client, user, token):
     response = client.delete(
-        url='/v1/users/1',
+        url=f'/v1/users/{user.id + 1}',
         headers={'Authorization': f'Bearer {token}'},
     )
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+    assert response.status_code == HTTPStatus.FORBIDDEN
+    assert response.json() == {'detail': 'Not enough permissions.'}
