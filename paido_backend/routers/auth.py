@@ -23,11 +23,9 @@ def login_for_access_token(
 ):
     db_user = session.scalar(select(User).where(User.email == form_data.username))
 
-    print(db_user.email)
-
     if not db_user or not verify_password(form_data.password, db_user.password):
         raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Incorrect e-mail or password.',
         )
 

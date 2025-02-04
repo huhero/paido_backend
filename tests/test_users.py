@@ -107,9 +107,9 @@ def test_put_user(client, user, token):
     }
 
 
-def test_put_wrong_user(client, user, token):
+def test_put_wrong_user(client, other_user, token):
     response = client.put(
-        url=f'/v1/users/{user.id + 1}',
+        url=f'/v1/users/{other_user.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'testusername02',
@@ -132,9 +132,9 @@ def test_deleted_user(client, user, token):
     assert response.json() == {'message': 'User Deleted.'}
 
 
-def test_deleted_wrong_user(client, user, token):
+def test_deleted_wrong_user(client, other_user, token):
     response = client.delete(
-        url=f'/v1/users/{user.id + 1}',
+        url=f'/v1/users/{other_user.id}',
         headers={'Authorization': f'Bearer {token}'},
     )
 
