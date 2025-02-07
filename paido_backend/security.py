@@ -58,6 +58,9 @@ def get_current_user(
         if not username:
             raise credentials_exception
 
+    # except DecodeError:
+    #     raise credentials_exception
+
     except ExpiredSignatureError:
         raise credentials_exception
 
