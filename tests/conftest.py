@@ -5,10 +5,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
-from paido_backend.app import app
-from paido_backend.database import get_session
-from paido_backend.models import User, table_registry
-from paido_backend.security import get_password_hash
+from paido_core.app import app
+from paido_core.database import get_session
+from paido_core.models import User, table_registry
+from paido_core.security import get_password_hash
 
 # Orgnizar
 # exejutar

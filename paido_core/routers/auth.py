@@ -6,10 +6,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from paido_backend.database import get_session
-from paido_backend.models import User
-from paido_backend.schemas import Token
-from paido_backend.security import create_access_token, get_current_user, verify_password
+from paido_core.database import get_session
+from paido_core.models import User
+from paido_core.schemas import Token
+from paido_core.security import create_access_token, get_current_user, verify_password
 
 router = APIRouter(prefix='/v1/auth', tags=['auth'])
 T_Session = Annotated[Session, Depends(get_session)]

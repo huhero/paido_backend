@@ -10,9 +10,9 @@ from pwdlib import PasswordHash
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from paido_backend.database import get_session
-from paido_backend.models import User
-from paido_backend.settings import Settings
+from paido_core.database import get_session
+from paido_core.models import User
+from paido_core.settings import Settings
 
 settings = Settings()
 

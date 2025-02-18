@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from jwt import decode
 
-from paido_backend.security import create_access_token, settings
+from paido_core.security import create_access_token, settings
 
 
 def test_jwt():

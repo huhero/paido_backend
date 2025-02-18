@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from paido_backend.database import get_session
-from paido_backend.models import User
-from paido_backend.schemas import Message, UserPublic, UserSchema
-from paido_backend.security import get_current_user, get_password_hash
+from paido_core.database import get_session
+from paido_core.models import User
+from paido_core.schemas import Message, UserPublic, UserSchema
+from paido_core.security import get_current_user, get_password_hash
 
 router = APIRouter(prefix='/v1/users', tags=['users'])
 T_Session = Annotated[Session, Depends(get_session)]

@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import FastAPI
 
-from paido_backend.routers import auth, users
+from paido_core.routers import auth, users
 
 app = FastAPI()
 
