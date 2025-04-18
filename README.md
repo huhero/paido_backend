@@ -28,7 +28,7 @@ Init dev server
 `fastapi dev src/paido_core/app.py`
 
 
-# Tasks
+# Tasks del proyecto
 
 lint: revisar buenas practicas de codigo
 
@@ -57,3 +57,18 @@ test: ejecuta los tests
 post_test: genera reporte de coverage
 
 `task post_test`
+
+
+# Alembic commands
+
+iniciar sistema de migraciones
+
+`alembic init [nombre]`
+
+Generar una migración
+
+`alembic revision --autogenerate -m "[name migration]"`
+
+Aplicar una migración
+
+`alembic upgrade head`
