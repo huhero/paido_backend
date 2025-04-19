@@ -7,3 +7,6 @@ class Settings(BaseSettings):
     )
 
     DATABASE_URL: str
+    SECRET_JWT_KEY: str
+    ALGORITHM_JWT: str
+    ACCESS_TOKEN_JWT_EXPIRE_MINUTES: int

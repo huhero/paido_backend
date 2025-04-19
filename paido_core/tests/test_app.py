@@ -69,9 +69,10 @@ def test_app_read_user_by_id_not_found(client):
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-def test_app_update_user(client, user):
+def test_app_update_user(client, user, token):
     response = client.put(
         url=f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'bob',
             'email': 'bob@example.com',
@@ -86,26 +87,76 @@ def test_app_update_user(client, user):
     }
 
 
-def test_app_update_user_not_found(client, user):
+def test_app_update_user_not_found(client, user, token):
     response = client.put(
         url=f'/users/{user.id + 1}',
+        headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'hola',
             'email': 'hola@example.com',
             'password': 'hola',
         },
     )
-    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-def test_delete_user(client, user):
-    response = client.delete(url=f'/users/{user.id}')
+def test_app_update_user_wrong_token(client, user):
+    response = client.put(
+        url=f'/users/{user.id}',
+        headers={'Authorization': 'Bearer TOKEN_ERRADO'},
+        json={
+            'username': 'hola',
+            'email': 'hola@example.com',
+            'password': 'hola',
+        },
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+
+def test_app_delete_user(client, user, token):
+    response = client.delete(
+        url=f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'User deleted'}
 
 
-def test_delete_user_not_found(client, user):
-    response = client.delete(url=f'/users/{user.id + 1}')
+def test_app_delete_user_not_found(client, user, token):
+    response = client.delete(
+        url=f'/users/{user.id + 1}',
+        headers={'Authorization': f'Bearer {token}'},
+    )
 
-    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_app_delete_user_wrong_token(client, user):
+    response = client.delete(
+        url=f'/users/{user.id}',
+        headers={'Authorization': 'Bearer TOKEN_ERRADO'},
+    )
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+
+def test_app_get_token(client, user):
+    response = client.post(
+        url='/token',
+        data={'username': user.email, 'password': user.clean_password},
+    )
+    token = response.json()
+
+    assert response.status_code == HTTPStatus.OK
+    assert 'access_token' in token
+    assert 'token_type' in token
+
+
+def test_app_get_token_with_error_password(client, user):
+    response = client.post(
+        url='/token',
+        data={'username': user.email, 'password': 'other password'},
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
