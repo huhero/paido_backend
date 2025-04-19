@@ -15,12 +15,8 @@ from paido_core.models import User
 from paido_core.settings import Settings
 
 pwd_context = PasswordHash.recommended()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
-
-
-SECRET_KEY = Settings().SECRET_JWT_KEY
-ALGORITHM = Settings().ALGORITHM_JWT
-ACCESS_TOKEN_EXPIRE_MINUTES = Settings().ACCESS_TOKEN_JWT_EXPIRE_MINUTES
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/token')
+settings = Settings()
 
 
 def get_password_hash(password: str):
@@ -34,10 +30,14 @@ def verify_password(plain_password: str, hashed_password: str):
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=settings.JWT_EXPIRE_MINUTES
     )
     to_encode.update({'exp': expire})
-    encoded_jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = encode(
+        to_encode,
+        settings.SECRET_JWT_KEY,
+        algorithm=settings.ALGORITHM_JWT,
+    )
     return encoded_jwt
 
 
@@ -51,7 +51,11 @@ def get_current_user(
         headers={'WWW-Authenticate': 'Bearer'},
     )
     try:
-        payload = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = decode(
+            token,
+            settings.SECRET_JWT_KEY,
+            algorithms=[settings.ALGORITHM_JWT],
+        )
         username = payload.get('sub')
 
         if not username:
